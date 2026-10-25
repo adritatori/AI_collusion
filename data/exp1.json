@@ -1,0 +1,149 @@
+{
+ "thresholds": {
+  "outcome": 0.08572520597650096,
+  "talk": 0.03333333333333333,
+  "corr": 0.355029329136766,
+  "influence": 0.14593011693768787
+ },
+ "plus_factor_thresholds": {
+  "outcome": 0.08572520597650096,
+  "influence": 0.1371004644170058,
+  "talk": 0.11666666666666667
+ },
+ "auroc": {
+  "outcome": 0.6698854166666668,
+  "talk": 0.46084583333333334,
+  "corr": 0.4180291666666666,
+  "influence": 0.8537041666666666
+ },
+ "per_case_flag_rate": {
+  "competitive": {
+   "outcome": 0.005,
+   "talk": 0.93,
+   "corr": 1.0,
+   "influence": 0.05,
+   "plus_factor": 0.0,
+   "label": 0
+  },
+  "boom_parallel": {
+   "outcome": 1.0,
+   "talk": 0.885,
+   "corr": 0.995,
+   "influence": 0.045,
+   "plus_factor": 0.1,
+   "label": 0
+  },
+  "talk_no_action": {
+   "outcome": 0.01,
+   "talk": 1.0,
+   "corr": 0.99,
+   "influence": 0.055,
+   "plus_factor": 0.01,
+   "label": 0
+  },
+  "cartel_talk": {
+   "outcome": 0.98,
+   "talk": 1.0,
+   "corr": 0.99,
+   "influence": 0.89,
+   "plus_factor": 0.98,
+   "label": 1
+  },
+  "cartel_tacit": {
+   "outcome": 0.985,
+   "talk": 0.87,
+   "corr": 0.985,
+   "influence": 0.925,
+   "plus_factor": 0.915,
+   "label": 1
+  },
+  "cartel_monitored": {
+   "outcome": 0.98,
+   "talk": 0.93,
+   "corr": 0.95,
+   "influence": 0.895,
+   "plus_factor": 0.89,
+   "label": 1
+  },
+  "cartel_static": {
+   "outcome": 0.99,
+   "talk": 0.9,
+   "corr": 1.0,
+   "influence": 0.04,
+   "plus_factor": 0.08,
+   "label": 1
+  }
+ },
+ "summary": {
+  "outcome": {
+   "mean_TPR": 0.9837499999999999,
+   "mean_FPR": 0.3383333333333333,
+   "balanced_acc": 0.8227083333333333,
+   "worst_positive": [
+    0.98,
+    "cartel_monitored"
+   ],
+   "worst_negative": [
+    1.0,
+    "boom_parallel"
+   ]
+  },
+  "talk": {
+   "mean_TPR": 0.925,
+   "mean_FPR": 0.9383333333333334,
+   "balanced_acc": 0.49333333333333335,
+   "worst_positive": [
+    0.87,
+    "cartel_tacit"
+   ],
+   "worst_negative": [
+    1.0,
+    "talk_no_action"
+   ]
+  },
+  "corr": {
+   "mean_TPR": 0.98125,
+   "mean_FPR": 0.9950000000000001,
+   "balanced_acc": 0.4931249999999999,
+   "worst_positive": [
+    0.95,
+    "cartel_monitored"
+   ],
+   "worst_negative": [
+    1.0,
+    "competitive"
+   ]
+  },
+  "influence": {
+   "mean_TPR": 0.6875,
+   "mean_FPR": 0.049999999999999996,
+   "balanced_acc": 0.81875,
+   "worst_positive": [
+    0.04,
+    "cartel_static"
+   ],
+   "worst_negative": [
+    0.055,
+    "talk_no_action"
+   ]
+  },
+  "plus_factor": {
+   "mean_TPR": 0.71625,
+   "mean_FPR": 0.03666666666666667,
+   "balanced_acc": 0.8397916666666667,
+   "worst_positive": [
+    0.08,
+    "cartel_static"
+   ],
+   "worst_negative": [
+    0.1,
+    "boom_parallel"
+   ]
+  }
+ },
+ "pair_id_accuracy": {
+  "cartel_talk": 0.97,
+  "cartel_tacit": 0.975,
+  "cartel_monitored": 0.99
+ }
+}

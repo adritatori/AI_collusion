@@ -1,0 +1,62 @@
+[
+ {
+  "jitter": 0.0,
+  "T": 10,
+  "auroc_influence": 0.6711555555555556,
+  "auroc_corr": 0.4199777777777778
+ },
+ {
+  "jitter": 0.0,
+  "T": 20,
+  "auroc_influence": 0.9117333333333332,
+  "auroc_corr": 0.3768
+ },
+ {
+  "jitter": 0.0,
+  "T": 30,
+  "auroc_influence": 0.9758,
+  "auroc_corr": 0.38126666666666664
+ },
+ {
+  "jitter": 0.0,
+  "T": 60,
+  "auroc_influence": 1.0,
+  "auroc_corr": 0.3262666666666667
+ },
+ {
+  "jitter": 0.0,
+  "T": 120,
+  "auroc_influence": 1.0,
+  "auroc_corr": 0.22182222222222225
+ },
+ {
+  "jitter": 0.08,
+  "T": 10,
+  "auroc_influence": 0.6464666666666666,
+  "auroc_corr": 0.32962222222222226
+ },
+ {
+  "jitter": 0.08,
+  "T": 20,
+  "auroc_influence": 0.9345777777777777,
+  "auroc_corr": 0.32982222222222224
+ },
+ {
+  "jitter": 0.08,
+  "T": 30,
+  "auroc_influence": 0.9887111111111111,
+  "auroc_corr": 0.2626666666666667
+ },
+ {
+  "jitter": 0.08,
+  "T": 60,
+  "auroc_influence": 0.999,
+  "auroc_corr": 0.21633333333333332
+ },
+ {
+  "jitter": 0.08,
+  "T": 120,
+  "auroc_influence": 1.0,
+  "auroc_corr": 0.22808888888888887
+ }
+]
