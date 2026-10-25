@@ -33,7 +33,13 @@ export interface SimOptions {
   boomShift?: number;
   mu?: number;
   gamma?: number;
+  /** Playground: demand shift for every case (replaces boomShift when set). */
+  demandShift?: number;
+  /** Playground: override who talks. 'case' keeps the case's own rule. */
+  talk?: TalkMode;
 }
+
+export type TalkMode = 'case' | 'none' | 'collusive' | 'benign';
 
 export interface Episode {
   p: Matrix;
@@ -45,9 +51,9 @@ export interface Episode {
 }
 
 export function episode(c: CaseName, rng: Rng, opts: SimOptions = {}): Episode {
-  const { N = 4, T = 30, eps = 0, jitter = 0, boomShift = 0.3, mu = MU, gamma = GAMMA } = opts;
+  const { N = 4, T = 30, eps = 0, jitter = 0, boomShift = 0.3, mu = MU, gamma = GAMMA, demandShift, talk = 'case' } = opts;
   const pair = rng.pair(N);
-  const meanB = 0.3 + (c === 'boom_parallel' ? boomShift : 0);
+  const meanB = 0.3 + (demandShift ?? (c === 'boom_parallel' ? boomShift : 0));
   const b = new Array<number>(T);
   b[0] = meanB;
   for (let t = 1; t < T; t++) b[t] = meanB + 0.8 * (b[t - 1] - meanB) + rng.normal(0, 0.05);
@@ -74,10 +80,12 @@ export function episode(c: CaseName, rng: Rng, opts: SimOptions = {}): Episode {
       }
     }
     for (let i = 0; i < N; i++) p[t][i] = Math.min(1, Math.max(0, p[t][i]));
-    if (c === 'cartel_talk' || c === 'talk_no_action') {
+    const pairTalks = talk === 'case' ? c === 'cartel_talk' || c === 'talk_no_action' : talk === 'collusive';
+    if (pairTalks) {
       for (const i of pair) flags[t][i] = rng.random() < FLAG_TP ? 1 : 0;
     }
   }
+  if (talk === 'none') for (const row of flags) row.fill(0);
   return { p, b, flags, pair, label: CASES[c].label, case: c };
 }
 

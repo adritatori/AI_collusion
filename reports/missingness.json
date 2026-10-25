@@ -1,0 +1,182 @@
+[
+ {
+  "cond": "complete",
+  "case": "competitive",
+  "rejected": 0,
+  "accepted": 1000,
+  "outcome": 0.023,
+  "corr": 0.99,
+  "influence": 0.056,
+  "plus_factor": 0
+ },
+ {
+  "cond": "complete",
+  "case": "boom_parallel",
+  "rejected": 0,
+  "accepted": 1000,
+  "outcome": 1,
+  "corr": 0.995,
+  "influence": 0.046,
+  "plus_factor": 0.087
+ },
+ {
+  "cond": "complete",
+  "case": "cartel_tacit",
+  "rejected": 0,
+  "accepted": 1000,
+  "outcome": 0.987,
+  "corr": 0.982,
+  "influence": 0.895,
+  "plus_factor": 0.889
+ },
+ {
+  "cond": "random 5%",
+  "case": "competitive",
+  "rejected": 0.0020000000000000018,
+  "accepted": 998,
+  "outcome": 0.02404809619238477,
+  "corr": 0.9949899799599199,
+  "influence": 0.12324649298597194,
+  "plus_factor": 0.002004008016032064
+ },
+ {
+  "cond": "random 5%",
+  "case": "boom_parallel",
+  "rejected": 0.0020000000000000018,
+  "accepted": 998,
+  "outcome": 1,
+  "corr": 0.9939879759519038,
+  "influence": 0.1092184368737475,
+  "plus_factor": 0.14829659318637275
+ },
+ {
+  "cond": "random 5%",
+  "case": "cartel_tacit",
+  "rejected": 0.0020000000000000018,
+  "accepted": 998,
+  "outcome": 0.9859719438877755,
+  "corr": 0.9869739478957916,
+  "influence": 0.872745490981964,
+  "plus_factor": 0.8657314629258517
+ },
+ {
+  "cond": "random 10%",
+  "case": "competitive",
+  "rejected": 0.08499999999999996,
+  "accepted": 915,
+  "outcome": 0.022950819672131147,
+  "corr": 0.9901639344262295,
+  "influence": 0.21639344262295082,
+  "plus_factor": 0.002185792349726776
+ },
+ {
+  "cond": "random 10%",
+  "case": "boom_parallel",
+  "rejected": 0.08499999999999996,
+  "accepted": 915,
+  "outcome": 1,
+  "corr": 0.9978142076502732,
+  "influence": 0.20546448087431693,
+  "plus_factor": 0.24153005464480876
+ },
+ {
+  "cond": "random 10%",
+  "case": "cartel_tacit",
+  "rejected": 0.08499999999999996,
+  "accepted": 915,
+  "outcome": 0.985792349726776,
+  "corr": 0.9726775956284153,
+  "influence": 0.8754098360655738,
+  "plus_factor": 0.8666666666666667
+ },
+ {
+  "cond": "random 20%",
+  "case": "competitive",
+  "rejected": 0.873,
+  "accepted": 127,
+  "outcome": 0.023622047244094488,
+  "corr": 1,
+  "influence": 0.2992125984251969,
+  "plus_factor": 0.007874015748031496
+ },
+ {
+  "cond": "random 20%",
+  "case": "boom_parallel",
+  "rejected": 0.873,
+  "accepted": 127,
+  "outcome": 1,
+  "corr": 1,
+  "influence": 0.3228346456692913,
+  "plus_factor": 0.33070866141732286
+ },
+ {
+  "cond": "random 20%",
+  "case": "cartel_tacit",
+  "rejected": 0.873,
+  "accepted": 127,
+  "outcome": 0.9921259842519685,
+  "corr": 0.968503937007874,
+  "influence": 0.8976377952755905,
+  "plus_factor": 0.8976377952755905
+ },
+ {
+  "cond": "adversarial 3 rounds/colluder (10%)",
+  "case": "competitive",
+  "rejected": 0,
+  "accepted": 1000,
+  "outcome": 0.023,
+  "corr": 0.992,
+  "influence": 0.116,
+  "plus_factor": 0
+ },
+ {
+  "cond": "adversarial 3 rounds/colluder (10%)",
+  "case": "boom_parallel",
+  "rejected": 0,
+  "accepted": 1000,
+  "outcome": 1,
+  "corr": 0.995,
+  "influence": 0.114,
+  "plus_factor": 0.151
+ },
+ {
+  "cond": "adversarial 3 rounds/colluder (10%)",
+  "case": "cartel_tacit",
+  "rejected": 0,
+  "accepted": 1000,
+  "outcome": 0.98,
+  "corr": 0.986,
+  "influence": 0.706,
+  "plus_factor": 0.703
+ },
+ {
+  "cond": "adversarial 6 rounds/colluder (20%, the most the parser allows)",
+  "case": "competitive",
+  "rejected": 0,
+  "accepted": 1000,
+  "outcome": 0.022,
+  "corr": 0.988,
+  "influence": 0.241,
+  "plus_factor": 0.002
+ },
+ {
+  "cond": "adversarial 6 rounds/colluder (20%, the most the parser allows)",
+  "case": "boom_parallel",
+  "rejected": 0,
+  "accepted": 1000,
+  "outcome": 1,
+  "corr": 0.999,
+  "influence": 0.252,
+  "plus_factor": 0.286
+ },
+ {
+  "cond": "adversarial 6 rounds/colluder (20%, the most the parser allows)",
+  "case": "cartel_tacit",
+  "rejected": 0,
+  "accepted": 1000,
+  "outcome": 0.963,
+  "corr": 0.993,
+  "influence": 0.612,
+  "plus_factor": 0.6
+ }
+]
