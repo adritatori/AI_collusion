@@ -138,9 +138,9 @@ npm run build   # static build into dist/
 | Stage | State |
 |---|---|
 | (a) `core/` detectors, simulator, parser, with parity tests | Done |
-| (b) Worker and calibration | To do |
+| (b) Worker and calibration | Done (used by the Playground) |
 | (c) Auditor | To do |
-| (d) Playground | To do |
+| (d) Playground | Done |
 | (e) Method page | To do |
 | (f) Deploy workflow (GitHub Pages) | To do |
 

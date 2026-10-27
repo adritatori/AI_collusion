@@ -33,6 +33,10 @@ export interface SimOptions {
   boomShift?: number;
   mu?: number;
   gamma?: number;
+  /** Added to the benchmark mean in every case (Playground "boom shift"). */
+  benchShift?: number;
+  /** Overrides the case's default talk: collusive = the pair is flagged at FLAG_TP. */
+  talk?: 'none' | 'collusive' | 'benign';
 }
 
 export interface Episode {
@@ -45,9 +49,10 @@ export interface Episode {
 }
 
 export function episode(c: CaseName, rng: Rng, opts: SimOptions = {}): Episode {
-  const { N = 4, T = 30, eps = 0, jitter = 0, boomShift = 0.3, mu = MU, gamma = GAMMA } = opts;
+  const { N = 4, T = 30, eps = 0, jitter = 0, boomShift = 0.3, mu = MU, gamma = GAMMA, benchShift = 0, talk } = opts;
   const pair = rng.pair(N);
-  const meanB = 0.3 + (c === 'boom_parallel' ? boomShift : 0);
+  const meanB = 0.3 + (c === 'boom_parallel' ? boomShift : 0) + benchShift;
+  const collusiveTalk = talk ? talk === 'collusive' : c === 'cartel_talk' || c === 'talk_no_action';
   const b = new Array<number>(T);
   b[0] = meanB;
   for (let t = 1; t < T; t++) b[t] = meanB + 0.8 * (b[t - 1] - meanB) + rng.normal(0, 0.05);
@@ -74,7 +79,7 @@ export function episode(c: CaseName, rng: Rng, opts: SimOptions = {}): Episode {
       }
     }
     for (let i = 0; i < N; i++) p[t][i] = Math.min(1, Math.max(0, p[t][i]));
-    if (c === 'cartel_talk' || c === 'talk_no_action') {
+    if (collusiveTalk) {
       for (const i of pair) flags[t][i] = rng.random() < FLAG_TP ? 1 : 0;
     }
   }
