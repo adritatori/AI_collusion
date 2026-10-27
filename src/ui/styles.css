@@ -44,3 +44,54 @@ button.primary { background: var(--blue); border-color: var(--blue); color: #fff
 .paper p, .tradeoff p { margin: 4px 0; }
 .chart { color: var(--fg); background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 8px; }
 @media (max-width: 520px) { h1 { font-size: 1.25rem; } }
+.tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 12px; }
+.tab { border-radius: 999px; padding: 6px 14px; min-height: 36px; }
+.tab.on { background: var(--blue); border-color: var(--blue); color: #fff; font-weight: 600; }
+.hero { background: var(--blue-soft); border-radius: 12px; padding: 4px 16px; margin: 12px 0; }
+.lead { font-size: 1.1rem; font-weight: 600; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.card { display: flex; flex-direction: column; gap: 6px; text-align: left; padding: 14px; border-radius: 12px; height: 100%; }
+.card b { font-size: 1.05rem; }
+.card .who { color: var(--muted); font-size: 0.8rem; margin-top: auto; }
+.plain { padding-left: 20px; }
+.plain li { margin: 6px 0; }
+.drop { border: 2px dashed var(--line); border-radius: 12px; padding: 14px 16px; text-align: center; background: var(--panel); }
+.drop.over { border-color: var(--blue); background: var(--blue-soft); }
+.drop p { margin: 4px 0; }
+.format { text-align: left; margin-top: 10px; }
+.format summary { cursor: pointer; font-weight: 600; }
+code { background: var(--line); padding: 1px 5px; border-radius: 4px; font-size: 0.9em; }
+input[type=number], textarea { font: inherit; color: inherit; background: var(--bg); border: 1px solid var(--line); border-radius: 8px; padding: 8px; width: 100%; }
+.code { font-family: ui-monospace, Menlo, Consolas, monospace; font-size: 0.85rem; }
+.modes { border: 0; padding: 0; margin: 0 0 12px; display: grid; gap: 6px; }
+.modes legend { font-weight: 600; margin-bottom: 4px; }
+.pickgrid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 4px; margin: 8px 0; }
+.profile { border: 1px solid var(--line); border-left: 6px solid var(--blue); border-radius: 12px; padding: 4px 16px 10px; margin: 16px 0; background: var(--panel); }
+.profile.amber { border-left-color: var(--amber); background: var(--amber-soft); }
+.profile .kicker { text-transform: uppercase; letter-spacing: 0.05em; font-size: 0.75rem; font-weight: 700; color: var(--muted); margin-bottom: 0; }
+.profile h3 { margin-top: 2px; }
+.tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 10px; }
+.tile { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; }
+.tile.hit { border-color: var(--blue); border-width: 2px; }
+.tile-name { font-weight: 700; }
+.tile-val { font-size: 1.1rem; font-variant-numeric: tabular-nums; }
+.tile-state { font-weight: 600; margin: 2px 0 4px; }
+.heat { display: grid; gap: 2px; max-width: 560px; overflow-x: auto; }
+.heat-h { font-size: 0.75rem; color: var(--muted); display: flex; align-items: center; justify-content: center; }
+.heat-c { font-size: 0.75rem; text-align: center; padding: 6px 2px; border: 1px solid var(--line); border-radius: 4px; font-variant-numeric: tabular-nums; }
+.heat-c.hot { outline: 3px solid var(--amber); outline-offset: -2px; font-weight: 700; }
+.two { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 12px; }
+.scroll { overflow-x: auto; }
+.grid { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+.grid th, .grid td { border: 1px solid var(--line); padding: 6px 8px; text-align: left; vertical-align: top; }
+.grid td { text-align: center; font-variant-numeric: tabular-nums; }
+.grid td.bad { background: var(--red-soft); color: var(--red); font-weight: 700; }
+.grid .mine { outline: 2px solid var(--blue); outline-offset: -2px; }
+.grid th .chip-tag { display: block; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.rule { background: var(--panel); border: 1px solid var(--line); border-radius: 8px; padding: 10px 12px; overflow-x: auto; white-space: pre-wrap; }
+figure { margin: 12px 0; }
+figure img { max-width: 100%; height: auto; background: #fff; border-radius: 8px; }
+figcaption { color: var(--muted); font-size: 0.85rem; }
+.err ul, .note ul { margin: 4px 0; padding-left: 20px; }
+.err { border: 1px solid var(--red); border-radius: 8px; padding: 8px 12px; }

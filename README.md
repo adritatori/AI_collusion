@@ -118,34 +118,82 @@ Source: `run_real.py` on the Agrawal et al. logs; paper Figures 4 and 5. Talk sc
 
 ---
 
-## About the tool
+## The tool
 
-Collusion Evidence Lab is a static site: it runs entirely in your browser. Your data never leaves your machine.
+A static website. It runs entirely in your browser: your files are never uploaded, and the page blocks every network connection.
+
+| Page | Who it is for | What it does |
+|---|---|---|
+| **Start here** | First-time visitors | Plain-language intro and where to go |
+| **Check my logs** (Auditor) | Companies running AI pricing, auditors, regulators | Upload a price CSV, get an evidence profile, the four checks, a price chart, and a "who follows whom" map |
+| **Playground** | Anyone learning the ideas | Simulate a market, change how a cartel behaves, see which checks catch it |
+| **Test my detector** | AI-safety researchers | Download labelled simulated markets, run your own method (upload its flags, or paste a JavaScript function), and compare its false alarms and misses with the paper's checks |
+| **Method** | Everyone | The definitions, the real-log finding, and the limits |
 
 It shows evidence. It does **not** give a verdict, a collusion probability, or automatic message labels.
+
+### Input format (Check my logs)
+
+One row per seller per round.
+
+| Column | Required | Meaning |
+|---|---|---|
+| `round` | yes | Round number (dates also work; they are numbered in sorted order) |
+| `agent` | yes | Seller name |
+| `price` | yes | The seller's price that round |
+| `benchmark` | no | The fair price that round (same for all sellers) |
+| `flagged` | no | 1 if your message monitor flagged that seller that round, else 0. Without it, Talk is "not available" |
+| `message` | no | Message text (only its length is plotted) |
+| `bid` | no | Average buyer bid that round (auction logs) |
+
+Also accepted: a file with one price column per seller, and common column names (`seller`, `firm`, `station`, `day`, `date`, `ask`). Files with more than 12 sellers show a picker. Example files are in [`samples/`](samples/).
+
+### Differences from the Python reference
+
+- **Competitive price.** The paper's Outcome check uses a fixed baseline of 0.3, which is why a demand boom fools it. In the Auditor, the competitive price is a field you set; when the file has a `benchmark` column it is filled with that column's average. The Playground keeps the paper's fixed baseline. On the bundled boom sample, the Python flags a plus factor with the fixed baseline (influence 0.149 against a 0.137 threshold), which is part of the paper's ~10% boom false-alarm rate.
+- **Units.** For prices outside 0 to 1, "high" is judged as a share of the way from the competitive price to a monopoly price you supply, using the paper's threshold divided by the simulated full markup (0.0857 / 0.35).
+- **Thresholds by log size.** Talk and influence thresholds are recalibrated for each log's length and number of sellers (and for logs without a benchmark). Measured false-alarm rates are in the test output of `tests/calibrate.test.ts` and `tests/audit.test.ts`.
+- **Auction mode.** The rest-of-market influence number has no calibrated threshold, so it is shown but left out of the plus-factor rule.
+
+### Limitations
+
+- The simulated sellers are scripted. Passing a test here does not show a method works on real markets.
+- Calibration is only as good as the simulated innocent-market model.
+- Talk needs your own message monitor. The tool never reads or labels messages.
+- 2 to 12 sellers. Influence is left out under 20 rounds.
+- Nothing here is legal advice.
 
 ## Run locally
 
 ```bash
 npm install
-npm test        # parity tests against the Python reference
+npm test        # parity, calibration, parser, own-method and UI tests
 npm run dev     # local dev server
 npm run build   # static build into dist/
 ```
+
+## Deploy
+
+**GitHub Pages** (workflow in `.github/workflows/deploy.yml`): in the repository go to *Settings, Pages* and set *Source* to *GitHub Actions*. Every push to `main` runs the tests, builds, and publishes. The site appears at `https://<user>.github.io/<repo>/`.
+
+**Vercel:** import the repository. The Vite preset works with no changes (output directory `dist`).
 
 ## Status
 
 | Stage | State |
 |---|---|
 | (a) `core/` detectors, simulator, parser, with parity tests | Done |
-| (b) Worker and calibration | Done (used by the Playground) |
-| (c) Auditor | To do |
+| (b) Worker and calibration | Done |
+| (c) Auditor | Done |
 | (d) Playground | Done |
-| (e) Method page | To do |
-| (f) Deploy workflow (GitHub Pages) | To do |
+| (e) Method page | Done |
+| (f) Deploy workflow (GitHub Pages) | Done. Needs the Pages setting above, and a merge to `main` |
+| Own-method testing (upload flags / paste function) | Done |
 
 The Python in [`reference/python/`](reference/python/) is the source of truth for every formula. See [`SPEC.md`](SPEC.md) for the full contract.
 
 ## Cite
 
-Data from: Agrawal et al. (2025), *arXiv:2507.01413*.
+Tory, A. R. *Oversight Removes the Evidence, Not the Harm: What Logs Can Prove About Collusion Among LLM Agents.* Preprint.
+
+Data from: Agrawal et al. (2025), *Evaluating LLM Agent Collusion in Double Auctions*, arXiv:2507.01413.

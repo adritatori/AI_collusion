@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CartesianGrid, Legend, Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
-import PlaygroundWorker from '../worker?worker';
-import type { WorkerRequest, WorkerResponse } from '../worker';
+import { useWorker } from './useWorker';
 import { CASES, CASE_NAMES, type CaseName } from '../core/sim';
 import type { PlaygroundParams, PlaygroundResult } from '../core/playground';
 import { paperFinding } from './paperFindings';
@@ -63,27 +62,18 @@ export function Playground() {
   const [result, setResult] = useState<PlaygroundResult | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
-  const worker = useRef<Worker | null>(null);
-  const reqId = useRef(0);
-
-  useEffect(() => {
-    const w = new PlaygroundWorker();
-    worker.current = w;
-    w.onmessage = (e: MessageEvent<WorkerResponse>) => {
-      if (e.data.id !== reqId.current) return;
-      setBusy(false);
-      if (e.data.error) setError(e.data.error);
-      else setResult(e.data.result!);
-    };
-    return () => w.terminate();
-  }, []);
+  const worker = useWorker();
+  const latest = useRef(0);
 
   const run = useCallback((p: PlaygroundParams) => {
-    reqId.current += 1;
+    const mine = ++latest.current;
     setBusy(true);
     setError('');
-    worker.current?.postMessage({ id: reqId.current, params: p } satisfies WorkerRequest);
-  }, []);
+    worker.call<'playground'>({ kind: 'playground', params: p }).then(
+      (r) => { if (mine === latest.current) { setBusy(false); setResult(r.result); } },
+      (e) => { if (mine === latest.current) { setBusy(false); setError(String(e)); } },
+    );
+  }, [worker]);
 
   useEffect(() => { run(params); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
