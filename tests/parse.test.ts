@@ -1,6 +1,6 @@
 // SPEC 9.6: one test per validation rule in 5.2, on small hand-made CSVs.
 import { describe, expect, it } from 'vitest';
-import { parseCsv } from '../src/core/parse';
+import { listAgents, normalizeCsv, parseCsv } from '../src/core/parse';
 import { corrScore, influenceScore } from '../src/core/detectors';
 
 /** Long CSV with T rounds and N agents; price(t, i) gives each cell (null = empty cell). */
@@ -155,5 +155,56 @@ describe('parser validation', () => {
       const r = parseCsv(readFileSync(new URL(f, dir), 'utf8'), f.startsWith('real') ? 'restOfMarket' : 'pairwise');
       expect(r.errors, f).toEqual([]);
     }
+  });
+});
+
+describe('real-world layouts', () => {
+  const wide = (T: number, names: string[], extra = '') =>
+    [`day,${names.join(',')}${extra ? ',' + extra : ''}`, ...Array.from({ length: T }, (_, t) => `${t + 1},${names.map((_, i) => noisy(t + 1, i + 1)).join(',')}${extra ? ',0.3' : ''}`)].join('\n');
+
+  it('reads one price column per seller', () => {
+    const r = parseCsv(wide(25, ['A', 'B', 'C']));
+    expect(r.errors).toEqual([]);
+    expect(r.log!.agents).toEqual(['A', 'B', 'C']);
+    expect(r.log!.rounds.length).toBe(25);
+    expect(r.warnings.join(' ')).toMatch(/one price column per seller/);
+  });
+  it('keeps a benchmark column in a wide file and does not treat it as a seller', () => {
+    const r = parseCsv(wide(25, ['A', 'B'], 'benchmark'));
+    expect(r.errors).toEqual([]);
+    expect(r.log!.agents).toEqual(['A', 'B']);
+    expect(r.log!.benchmark).not.toBeNull();
+  });
+  it('reads alternative column names', () => {
+    const text = ['day,seller,ask', ...Array.from({ length: 22 }, (_, t) => [1, 2].map((i) => `${t + 1},s${i},${noisy(t + 1, i)}`).join('\n'))].join('\n');
+    const r = parseCsv(text);
+    expect(r.errors).toEqual([]);
+    expect(r.log!.agents).toEqual(['s1', 's2']);
+  });
+  it('numbers date labels in sorted order', () => {
+    const text = ['date,seller,price', ...['2024-01-03', '2024-01-01', '2024-01-02'].flatMap((d, k) => [`${d},a,${0.3 + k * 0.01}`, `${d},b,${0.31 + k * 0.01}`])].join('\n');
+    const r = parseCsv(text);
+    expect(r.errors).toEqual([]);
+    expect(r.log!.rounds).toEqual([1, 2, 3]);
+    expect(r.log!.p[0][0]).toBeCloseTo(0.31, 9); // 2024-01-01 had k = 1
+  });
+  it('leaves a clean long file untouched (row numbers keep matching the file)', () => {
+    const t = csv(25, 3, noisy);
+    expect(normalizeCsv(t).text).toBe(t);
+    expect(normalizeCsv(t).notes).toEqual([]);
+  });
+  it('keeps only the chosen sellers and lists sellers most complete first', () => {
+    const lines = csv(25, 14, (t, i) => (i === 14 && t > 3 ? null : noisy(t, i)));
+    expect(parseCsv(lines).errors.join(' ')).toMatch(/not meaningful at this size/);
+    const ranked = listAgents(lines);
+    expect(ranked).toHaveLength(14);
+    expect(ranked[ranked.length - 1].agent).toBe('a14');
+    const r = parseCsv(lines, 'pairwise', { onlyAgents: ranked.slice(0, 5).map((a) => a.agent) });
+    expect(r.errors).toEqual([]);
+    expect(r.log!.agents).toHaveLength(5);
+  });
+  it('still names the row for a non-numeric price in a wide file', () => {
+    const r = parseCsv('day,A,B\n1,0.3,0.31\n2,abc,0.3\n3,0.3,0.3');
+    expect(r.errors[0]).toMatch(/price "abc" is not a number/);
   });
 });

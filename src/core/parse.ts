@@ -42,10 +42,102 @@ function num(s: string | undefined): number | null {
 
 const agentOrder = (a: string, b: string) => a.localeCompare(b, undefined, { numeric: true });
 
-export function parseCsv(text: string, mode: Mode = 'pairwise'): ParseResult {
+const ALIASES = {
+  round: ['t', 'period', 'day', 'date', 'time', 'week', 'hour', 'step', 'timestamp'],
+  agent: ['seller', 'firm', 'station', 'store', 'company', 'id', 'name'],
+  price: ['ask', 'prices'],
+};
+const RESERVED = new Set(['round', 'agent', 'price', 'benchmark', 'flagged', 'message', 'bid']);
+
+export interface ParseOptions {
+  /** Keep only these agents (used by the seller picker for large panels). */
+  onlyAgents?: string[];
+}
+
+/**
+ * Accept common real-world layouts and rewrite them to the long format.
+ * Unchanged text is returned as-is so row numbers in errors still match the user's file.
+ * 1. Alternative column names (seller, firm, day, date, ask ...).
+ * 2. Wide layout: a round/date column plus one price column per seller.
+ * 3. Non-numeric round labels (dates) become 1, 2, 3 ... in sorted order.
+ */
+export function normalizeCsv(text: string): { text: string; notes: string[] } {
+  const original = new Map<string, string>();
+  const parsed = Papa.parse<Record<string, string>>(text.replace(/^\uFEFF/, ''), {
+    header: true,
+    skipEmptyLines: 'greedy',
+    transformHeader: (h) => {
+      const k = h.trim().toLowerCase();
+      if (!original.has(k)) original.set(k, h.trim());
+      return k;
+    },
+  });
+  const fields = parsed.meta.fields ?? [];
+  const notes: string[] = [];
+  const rename = new Map<string, string>();
+  for (const canon of ['round', 'agent', 'price'] as const) {
+    if (fields.includes(canon)) continue;
+    const alt = ALIASES[canon].find((a) => fields.includes(a) && !rename.has(a));
+    if (alt) { rename.set(alt, canon); notes.push(`Read column "${alt}" as ${canon}.`); }
+  }
+  const cols = fields.map((f) => rename.get(f) ?? f);
+  let rows = parsed.data.map((r) => Object.fromEntries(fields.map((f, i) => [cols[i], r[f]])));
+
+  const wide = cols.includes('round') && !cols.includes('agent') && !cols.includes('price');
+  const sellerCols = cols.filter((c) => !RESERVED.has(c));
+  let changed = rename.size > 0;
+  if (wide && sellerCols.length >= 2) {
+    const out: Record<string, string>[] = [];
+    for (const r of rows) {
+      for (const c of sellerCols) {
+        const extra: Record<string, string> = {};
+        for (const k of cols) if (RESERVED.has(k) && k !== 'round') extra[k] = r[k] ?? '';
+        out.push({ round: r.round ?? '', agent: original.get(c) ?? c, price: r[c] ?? '', ...extra });
+      }
+    }
+    rows = out;
+    changed = true;
+    notes.push(`Read one price column per seller (${sellerCols.length} sellers); row numbers below refer to the converted table.`);
+  }
+  if (!changed && !rows.some((r) => r.round !== undefined && Number.isNaN(Number(r.round)))) return { text, notes };
+  if (!rows.length || rows[0].round === undefined) return { text, notes };
+
+  const labels = [...new Set(rows.map((r) => (r.round ?? '').trim()))];
+  if (labels.some((l) => l !== '' && Number.isNaN(Number(l)))) {
+    const order = new Map([...labels].sort((a, b) => a.localeCompare(b)).map((l, i) => [l, i + 1]));
+    rows = rows.map((r) => ({ ...r, round: String(order.get((r.round ?? '').trim()) ?? '') }));
+    notes.push('Round labels are not numbers; numbered them 1, 2, 3 ... in sorted order.');
+  }
+  return { text: Papa.unparse(rows), notes };
+}
+
+export interface AgentSummary { agent: string; rows: number; priced: number }
+
+/** Agents found in a file with how many price cells each has, most complete first. */
+export function listAgents(text: string): AgentSummary[] {
+  const { text: t } = normalizeCsv(text);
+  const parsed = Papa.parse<Record<string, string>>(t.replace(/^\uFEFF/, ''), {
+    header: true,
+    skipEmptyLines: 'greedy',
+    transformHeader: (h) => h.trim().toLowerCase(),
+  });
+  const m = new Map<string, AgentSummary>();
+  for (const r of parsed.data) {
+    const a = (r.agent ?? '').trim();
+    if (!a) continue;
+    const e = m.get(a) ?? { agent: a, rows: 0, priced: 0 };
+    e.rows++;
+    if (Number.isFinite(Number((r.price ?? '').trim())) && (r.price ?? '').trim() !== '') e.priced++;
+    m.set(a, e);
+  }
+  return [...m.values()].sort((x, y) => y.priced - x.priced || agentOrder(x.agent, y.agent));
+}
+
+export function parseCsv(input: string, mode: Mode = 'pairwise', options: ParseOptions = {}): ParseResult {
   const errors: string[] = [];
-  const warnings: string[] = [];
-  const parsed = Papa.parse<Record<string, string>>(text.replace(/^﻿/, ''), {
+  const { text, notes } = normalizeCsv(input);
+  const warnings: string[] = [...notes];
+  const parsed = Papa.parse<Record<string, string>>(text.replace(/^\uFEFF/, ''), {
     header: true,
     skipEmptyLines: 'greedy',
     transformHeader: (h) => h.trim().toLowerCase(),
@@ -68,6 +160,7 @@ export function parseCsv(text: string, mode: Mode = 'pairwise'): ParseResult {
     const agent = (r.agent ?? '').trim();
     if (round === null || Number.isNaN(round)) { errors.push(`Row ${rowNo}: round "${r.round ?? ''}" is not a number.`); return; }
     if (!agent) { errors.push(`Row ${rowNo}: agent is empty.`); return; }
+    if (options.onlyAgents && !options.onlyAgents.includes(agent)) return;
     let price = num(r.price);
     if (price === null) { missingPrice++; price = NaN; }
     else if (Number.isNaN(price)) { errors.push(`Row ${rowNo}: price "${r.price}" is not a number.`); return; }
